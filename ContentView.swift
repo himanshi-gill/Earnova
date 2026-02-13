@@ -1,51 +1,56 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var appState: AppState
 
     enum Tab {
         case map, quests, create, shop, profile
     }
-
-    @State private var selectedTab: Tab = .map
-
-    @State private var userName: String = ""
-    @State private var selectedAvatarImage: String = "animal1"
-    @State private var coinGoal: Int = 3000
-    @State private var coinsCollected: Int = 850
-    @State private var starsCollected: Int = 120
     
-    @State private var tasks: [Task] = []
-
+    @State private var selectedTab: Tab = .map
+    
 
     var body: some View {
         ZStack {
-//            LinearGradient(
-//                colors: [
-//                    Color(hex: "#061732"),
-//                    Color(hex: "#0E3867"),
-//                    Color(hex: "#5E677A")
-//                ],
-//                startPoint: .top,
-//                endPoint: .bottom
-//            )
-//            .ignoresSafeArea()
+            // Background layer (does NOT affect layout)
+            backgroundForTab()
 
-            Image("it")
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-
+            // Foreground content (layout stays same)
             VStack {
                 Spacer()
-
-                currentTabView()   // ✅ just CALL it here
-
+                currentTabView()
                 Spacer()
-
                 CustomTabBar(selectedTab: $selectedTab)
             }
         }
     }
+
+    @ViewBuilder
+    private func backgroundForTab() -> some View {
+        switch selectedTab {
+        case .map:
+            Image("it")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea() // ONLY the background ignores safe area
+
+        default:
+            LinearGradient(
+                colors: [
+                    Color(hex: "#061732"),
+                    Color(hex: "#0E3867"),
+                    Color(hex: "#5E677A")
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+        }
+    }
+
+
+    
+
 
     // ✅ FUNCTION GOES HERE (outside body)
     @ViewBuilder
@@ -53,37 +58,41 @@ struct ContentView: View {
         switch selectedTab {
         case .map:
             MapView(
-                coinsCollected: $coinsCollected,
-                starsCollected: $starsCollected,
-                tasks: $tasks
+                coinsCollected: $appState.coinsCollected,
+                starsCollected: $appState.starsCollected,
+                tasks: $appState.tasks
             )
+
 
         case .quests:
             QuestsView(
-                starsCollected: $starsCollected,
-                coinsCollected: $coinsCollected
+                starsCollected: $appState.starsCollected,
+                coinsCollected: $appState.coinsCollected
             )
+
 
         case .create:
             CreateStoryView(
-                coinsCollected: $coinsCollected,
-                tasks: $tasks,
-                selectedAvatarImage: $selectedAvatarImage
+                coinsCollected: $appState.coinsCollected,
+                tasks: $appState.tasks,
+                selectedAvatarImage: $appState.selectedAvatarImage
             )
+
 
         case .shop:
             ShopView(
-                selectedAvatarImage: $selectedAvatarImage,
-                starsCollected: $starsCollected
+                selectedAvatarImage: $appState.selectedAvatarImage,
+                starsCollected: $appState.starsCollected
             )
+
 
         case .profile:
             ProfileView(
-                userName: $userName,
-                selectedAvatarImage: $selectedAvatarImage,
-                coinGoal: $coinGoal,
-                coinsCollected: $coinsCollected,
-                starsCollected: $starsCollected,
+                userName: $appState.userName,
+                selectedAvatarImage: $appState.selectedAvatarImage,
+                coinGoal: $appState.coinGoal,
+                coinsCollected: $appState.coinsCollected,
+                starsCollected: $appState.starsCollected
             )
         }
     }

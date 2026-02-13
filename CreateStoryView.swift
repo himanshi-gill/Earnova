@@ -2,58 +2,148 @@ import SwiftUI
 
 struct CreateStoryView: View {
     @Binding var coinsCollected: Int
-    @Binding var tasks: [Task]   // 👈 receive tasks from parent
+    @Binding var tasks: [Task]
+    @Binding var selectedAvatarImage: String
     
-    @Binding var selectedAvatarImage: String   // 👈 ADD
     @State private var selectedTaskType: TaskType = .reward
-
-    
     @State private var newTaskTitle = ""
+    
+    let quickTasks = [
+        "Drink Water",
+        "Read 10 Pages",
+        "Workout",
+        "Meditation",
+        "Study 1 Hour",
+        "No Social Media"
+    ]
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Create New Task")
-                .font(.title)
-                .bold()
-
-            TextField("Enter task name", text: $newTaskTitle)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
+        VStack(spacing: 0) {
             
-            HStack(spacing: 16) {
-                Button {
-                    selectedTaskType = .reward
-                } label: {
-                    Text("Reward +10")
-                        .padding()
-                        .background(selectedTaskType == .reward ? Color.green : Color.gray)
+            Text("Create New Task")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .foregroundColor(.white)
+//                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 10)
+            // TOP SECTION
+            VStack(spacing: 18) {
+                // Text Field
+                HStack(spacing: 8) {
+
+                    TextField("Enter task name", text: $newTaskTitle)
                         .foregroundColor(.white)
-                        .cornerRadius(10)
+
+                    QuickTaskDropdownView(
+                        quickTasks: quickTasks,
+                        selectedTask: $newTaskTitle
+                    )
                 }
+                .padding()
+                .background(Color.white.opacity(0.15))
+                .cornerRadius(14)
 
-                Button {
-                    selectedTaskType = .penalty
-                } label: {
-                    Text("Penalty -15")
-                        .padding()
-                        .background(selectedTaskType == .penalty ? Color.red : Color.gray)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
+                // Buttons
+                HStack(spacing: 16) {
+                    
+                    Button {
+                        selectedTaskType = .reward
+                        addTask()
+                    } label: {
+                        Label("Reward +10", systemImage: "plus.circle.fill")
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.green)
+                            .foregroundColor(.white)
+                            .cornerRadius(14)
+                            .shadow(radius: 4)
+                    }
+
+                    Button {
+                        selectedTaskType = .penalty
+                        addTask()
+                    } label: {
+                        Label("Penalty -15", systemImage: "minus.circle.fill")
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.red)
+                            .foregroundColor(.white)
+                            .cornerRadius(14)
+                            .shadow(radius: 4)
+                    }
                 }
-            }
-
-
-            Button("Add Task") {
-                addTask()
             }
             .padding()
-            .background(Color(hex: "#F07B0F"))
-            .foregroundColor(.white)
-            .cornerRadius(12)
+            .background(
+                LinearGradient(
+                    colors: [Color(hex: "#F07B0F"), Color(hex: "#D65A00")],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .cornerRadius(20)
+            .padding()
 
-            Spacer()
+            // BOTTOM SCROLLABLE LOG AREA
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    ForEach(tasks.indices, id: \.self) { index in
+                        let task = tasks[index]
+
+                        HStack(spacing: 10) {
+
+                            Image(task.avatarImage)
+                                .resizable()
+                                .frame(width: 60, height: 60)
+                                .clipShape(Circle())
+                                .shadow(radius: 3)
+
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(task.title)
+                                    .font(.title3)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(
+                                        task.type == .reward
+                                        ? Color(red: 0.65, green: 0.95, blue: 0.65)
+                                        : Color(red: 1.0, green: 0.35, blue: 0.2)
+                                    )
+
+                                Text(task.createdAt.formatted(
+                                    date: .abbreviated,
+                                    time: .shortened
+                                ))
+                                .font(.caption)
+                                .foregroundColor(.white.opacity(0.7))
+                            }
+
+                            Spacer()
+
+                            // BIGGER EDIT BUTTON
+                            Button {
+                                editTask(at: index)
+                            } label: {
+                                Image(systemName: "pencil.circle.fill")
+                                    .font(.system(size: 40))
+                                    .foregroundColor(.blue)
+                            }
+
+                            // BIGGER DELETE BUTTON
+                            Button {
+                                deleteTask(at: index)
+                            } label: {
+                                Image(systemName: "trash.circle.fill")
+                                    .font(.system(size: 40))
+                                    .foregroundColor(.red)
+                            }
+                        }
+                        .padding()
+                        .background(Color.white.opacity(0.15))
+                        .cornerRadius(16)
+                    }
+                }
+                .padding()
+            }
         }
-        .padding()
     }
 
     func addTask() {
@@ -63,14 +153,34 @@ struct CreateStoryView: View {
         coinsCollected += coinChange
 
         let task = Task(
+            id: UUID(),
             title: newTaskTitle,
             avatarImage: selectedAvatarImage,
             type: selectedTaskType,
             xOffset: CGFloat.random(in: -120...120),
-            yOffset: CGFloat.random(in: -200...200)
+            yOffset: CGFloat.random(in: -200...200),
+            createdAt: Date()
         )
 
         tasks.append(task)
         newTaskTitle = ""
+    }
+    func deleteTask(at index: Int) {
+        let task = tasks[index]
+
+        // reverse coin change
+        if task.type == .reward {
+            coinsCollected -= 10
+        } else {
+            coinsCollected += 15
+        }
+
+        tasks.remove(at: index)
+    }
+
+    func editTask(at index: Int) {
+        newTaskTitle = tasks[index].title
+        selectedTaskType = tasks[index].type
+        tasks.remove(at: index)
     }
 }

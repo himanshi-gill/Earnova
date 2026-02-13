@@ -19,8 +19,8 @@ let package = Package(
             bundleIdentifier: "com.HG.Paysa",
             displayVersion: "1.0",
             bundleVersion: "1",
-            appIcon: .placeholder(icon: .heart),
-            accentColor: .presetColor(.brown),
+            appIcon: .placeholder(icon: .mic),
+            accentColor: .presetColor(.red),
             supportedDeviceFamilies: [
                 .pad,
                 .phone
@@ -30,8 +30,7 @@ let package = Package(
                 .landscapeRight,
                 .landscapeLeft,
                 .portraitUpsideDown(.when(deviceFamilies: [.pad]))
-            ],
-            appCategory: .productivity
+            ]
         )
     ],
     targets: [

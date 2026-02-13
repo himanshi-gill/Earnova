@@ -1,13 +1,13 @@
 import SwiftUI
 
 @main
-struct MyApp: App {
-    
-//    @StateObject var userData = UserData()
-    
+struct YourAppNameApp: App {
+    @StateObject private var appState = AppState()
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(appState)
         }
     }
 }

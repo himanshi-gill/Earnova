@@ -12,13 +12,7 @@ struct MapView: View {
         ScrollView(.vertical, showsIndicators: false) {
             ZStack(alignment: .top) {
                 
-//                // 🐾 Avatars
-//                ForEach(avatarImages.indices, id: \.self) { index in
-//                    Image(avatarImages[index])
-//                        .resizable()
-//                        .frame(width: 45, height: 45)
-//                        .position(pointOnPath(progress: CGFloat(index + 1) / CGFloat(avatarImages.count + 2)))
-//                }
+
 
                 // ⭐ Coins & Stars (fixed at top)
                 VStack {
@@ -40,37 +34,27 @@ struct MapView: View {
                     Spacer()
                 }
                 ZStack {
-                    // Loop through tasks
-                    ForEach(tasks) { task in
-                        VStack(spacing: 6) {
-                            Image(task.avatarImage)
-                                .resizable()
-                                .frame(width: 60, height: 60)
-                                .clipShape(Circle())
-                                .overlay(
-                                    Circle()
-                                        .stroke(task.type == .reward ? Color.green : Color.red, lineWidth: 3)
-                                )
-
-                            Text(task.title)
-                                .font(.caption)
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 4)
-                                .background(Color.blue)
-                                .cornerRadius(10)
-
-                            if task.type == .penalty {
-                                Text("-15 Coins")
-                                    .font(.caption2)
-                                    .foregroundColor(.red)
-                            }
-                        }
-                        .offset(x: task.xOffset, y: task.yOffset)
-                        .animation(.spring(), value: tasks.count) // optional for smooth appearance
+                    ForEach($tasks) { $task in
+                        @State var dragOffset = CGSize.zero // temporary offset for dragging
+                        
+                        TaskBubble(task: task)
+                            .offset(x: task.xOffset + dragOffset.width, y: task.yOffset + dragOffset.height)
+                            .modifier(HoverEffect())
+                            .gesture(
+                                DragGesture()
+                                    .onChanged { value in
+                                        dragOffset = value.translation
+                                    }
+                                    .onEnded { value in
+                                        task.xOffset += value.translation.width
+                                        task.yOffset += value.translation.height
+                                        dragOffset = .zero
+                                    }
+                            )
                     }
+
                 }
-                .frame(height: 600) // adjust as needed
+                .frame(height: 600)
             }
         }
     }
@@ -94,36 +78,45 @@ struct TaskBubble: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            
-//            ForEach(tasks) { task in
-//                TaskBubble(task: task)
-//                    .offset(x: task.xOffset, y: task.yOffset)
-//            }
-
             Image(task.avatarImage)
                 .resizable()
-                .frame(width: 36, height: 36)
+                .frame(width: 60, height: 60)
                 .clipShape(Circle())
                 .overlay(
                     Circle()
-                        .stroke(
-                            task.type == .reward ? Color.green : Color.red,
-                            lineWidth: 2
-                        )
+                        .stroke(task.type == .reward ? Color.green : Color.red, lineWidth: 3)
                 )
 
             Text(task.title)
-                .font(.caption2)
-                .padding(.horizontal, 8)
+                .font(.caption)
+                .padding(.horizontal, 10)
                 .padding(.vertical, 4)
-                .background(Color.white)
+                .background(Color.blue)
                 .cornerRadius(10)
 
             if task.type == .penalty {
-                Text("-15")
+                Text("-15 Coins")
                     .font(.caption2)
                     .foregroundColor(.red)
             }
         }
     }
 }
+
+
+struct HoverEffect: ViewModifier {
+    @State private var hover: CGFloat = 0
+
+    func body(content: Content) -> some View {
+        content
+            .offset(y: hover) // hover animation added on top of manual Y offset
+            .onAppear {
+                let baseAnimation = Animation.easeInOut(duration: 1.5)
+                    .repeatForever(autoreverses: true)
+                withAnimation(baseAnimation) {
+                    hover = 10 // floating distance
+                }
+            }
+    }
+}
+
