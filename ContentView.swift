@@ -1,21 +1,21 @@
 import SwiftUI
+import ConfettiSwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
-
+    
     enum Tab {
         case map, quests, create, shop, profile
     }
     
     @State private var selectedTab: Tab = .map
-    
+    @State private var confettiCounter = 0
+    @State private var isCelebrating = false
 
     var body: some View {
         ZStack {
-            // Background layer (does NOT affect layout)
             backgroundForTab()
 
-            // Foreground content (layout stays same)
             VStack {
                 Spacer()
                 currentTabView()
@@ -23,6 +23,19 @@ struct ContentView: View {
                 CustomTabBar(selectedTab: $selectedTab)
             }
         }
+        .onChange(of: appState.coinsCollected) { newValue in
+            if newValue >= appState.coinGoal && !isCelebrating {
+                startConfetti()
+            }
+        }
+        .onChange(of: appState.coinGoal) { _ in
+            isCelebrating = false
+        }
+        .confettiCannon(
+            trigger: $confettiCounter,
+            num: 80,
+            radius: 500
+        )
     }
 
     @ViewBuilder
@@ -47,7 +60,24 @@ struct ContentView: View {
             .ignoresSafeArea()
         }
     }
+    private func startConfetti() {
+        isCelebrating = true
+        confettiCounter += 1
 
+        let endTime = Date().addingTimeInterval(30)
+
+        Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { timer in
+            if Date() < endTime {
+                confettiCounter += 1
+            } else {
+                timer.invalidate()
+                isCelebrating = false
+                
+                // 🔥 RESET APP STATE HERE
+                appState.completeGoalAndReset()
+            }
+        }
+    }
 
     
 

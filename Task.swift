@@ -7,9 +7,9 @@ enum TaskType: String, Codable {
 
 struct Task: Identifiable, Codable{
     let id: UUID
-    let title: String
-    let avatarImage: String
-    let type: TaskType
+    var title: String
+    var avatarImage: String
+    var type: TaskType
     var xOffset: CGFloat = 0
     var yOffset: CGFloat = 0
     var createdAt: Date 

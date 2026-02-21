@@ -7,6 +7,7 @@ struct CreateStoryView: View {
     
     @State private var selectedTaskType: TaskType = .reward
     @State private var newTaskTitle = ""
+    @State private var editingTaskIndex: Int? = nil
     
     let quickTasks = [
         "Drink Water",
@@ -44,32 +45,50 @@ struct CreateStoryView: View {
                 .cornerRadius(14)
 
                 // Buttons
-                HStack(spacing: 16) {
-                    
+                // Buttons
+                if editingTaskIndex != nil {
+
                     Button {
-                        selectedTaskType = .reward
                         addTask()
                     } label: {
-                        Label("Reward +10", systemImage: "plus.circle.fill")
+                        Label("Save Changes", systemImage: "checkmark.circle.fill")
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.green)
+                            .background(Color.blue)
                             .foregroundColor(.white)
                             .cornerRadius(14)
                             .shadow(radius: 4)
                     }
 
-                    Button {
-                        selectedTaskType = .penalty
-                        addTask()
-                    } label: {
-                        Label("Penalty -15", systemImage: "minus.circle.fill")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.red)
-                            .foregroundColor(.white)
-                            .cornerRadius(14)
-                            .shadow(radius: 4)
+                } else {
+
+                    HStack(spacing: 16) {
+
+                        Button {
+                            selectedTaskType = .reward
+                            addTask()
+                        } label: {
+                            Label("Reward +10", systemImage: "plus.circle.fill")
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.green)
+                                .foregroundColor(.white)
+                                .cornerRadius(14)
+                                .shadow(radius: 4)
+                        }
+
+                        Button {
+                            selectedTaskType = .penalty
+                            addTask()
+                        } label: {
+                            Label("Penalty -15", systemImage: "minus.circle.fill")
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.red)
+                                .foregroundColor(.white)
+                                .cornerRadius(14)
+                                .shadow(radius: 4)
+                        }
                     }
                 }
             }
@@ -149,26 +168,56 @@ struct CreateStoryView: View {
     func addTask() {
         guard !newTaskTitle.isEmpty else { return }
 
-        let coinChange = selectedTaskType == .reward ? 10 : -15
-        coinsCollected += coinChange
+        if let index = editingTaskIndex {
 
-        let task = Task(
-            id: UUID(),
-            title: newTaskTitle,
-            avatarImage: selectedAvatarImage,
-            type: selectedTaskType,
-            xOffset: CGFloat.random(in: -120...120),
-            yOffset: CGFloat.random(in: -200...200),
-            createdAt: Date()
-        )
+            let oldType = tasks[index].type
+            let newType = selectedTaskType
 
-        tasks.append(task)
+            // If type changed, adjust coins correctly
+            if oldType != newType {
+                if oldType == .reward {
+                    coinsCollected -= 10
+                } else {
+                    coinsCollected += 15
+                }
+
+                if newType == .reward {
+                    coinsCollected += 10
+                } else {
+                    coinsCollected -= 15
+                }
+            }
+
+            // Update task
+            tasks[index].title = newTaskTitle
+            tasks[index].type = newType
+
+            editingTaskIndex = nil
+
+        } else {
+            // NEW TASK MODE
+            let coinChange = selectedTaskType == .reward ? 10 : -15
+            coinsCollected += coinChange
+
+            let task = Task(
+                id: UUID(),
+                title: newTaskTitle,
+                avatarImage: selectedAvatarImage,
+                type: selectedTaskType,
+                xOffset: CGFloat.random(in: -120...120),
+                yOffset: CGFloat.random(in: -200...200),
+                createdAt: Date()
+            )
+
+            tasks.append(task)
+        }
+
         newTaskTitle = ""
     }
+    
     func deleteTask(at index: Int) {
         let task = tasks[index]
 
-        // reverse coin change
         if task.type == .reward {
             coinsCollected -= 10
         } else {
@@ -176,11 +225,17 @@ struct CreateStoryView: View {
         }
 
         tasks.remove(at: index)
+
+        // If we were editing this task, reset editing state
+        if editingTaskIndex == index {
+            editingTaskIndex = nil
+            newTaskTitle = ""
+        }
     }
 
     func editTask(at index: Int) {
         newTaskTitle = tasks[index].title
         selectedTaskType = tasks[index].type
-        tasks.remove(at: index)
+        editingTaskIndex = index
     }
 }

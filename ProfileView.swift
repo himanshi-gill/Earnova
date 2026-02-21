@@ -122,7 +122,7 @@ struct ProfileView: View {
                                     HStack(spacing: 24) {
 
                                         Button {
-                                            coinGoal = max(1000, coinGoal - 500)
+                                            coinGoal = max(50, coinGoal - 500)
                                         } label: {
                                             Image(systemName: "minus.circle.fill")
                                                 .font(.system(size: 26))
