@@ -12,19 +12,24 @@ struct MapView: View {
         ScrollView(.vertical, showsIndicators: false) {
             ZStack(alignment: .top) {
                 
-
-
-                // ⭐ Coins & Stars (fixed at top)
+// ⭐ Coins & Stars (fixed at top)
                 VStack {
                     HStack {
                         Spacer()
                         VStack(alignment: .trailing, spacing: 6) {
-                            Text("Coins: \(coinsCollected)")
-                                .foregroundColor(Color(hex: "#F07B0F"))
-                                .bold()
-                            Text("Stars: \(starsCollected)")
-                                .foregroundColor(Color(hex: "#D1A75C"))
-                                .bold()
+                            HStack(spacing: 6) {
+                                Image(systemName: "bitcoinsign.circle.fill")
+                                    .foregroundColor(Color(hex: "#F07B0F"))
+                                Text("Coins: \(coinsCollected)")
+                                    .foregroundColor(.white)                                     .bold()
+                            }
+                            HStack(spacing: 6) {
+                                Image(systemName: "star.fill")
+                                    .foregroundColor(Color(hex: "#D1A75C"))
+                                Text("Stars: \(starsCollected)")
+                                    .foregroundColor(.white) 
+                                    .bold()
+                            }
                         }
                         .padding(10)
                         .background(Color.white.opacity(0.1))

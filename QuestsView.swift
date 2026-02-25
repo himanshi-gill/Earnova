@@ -19,7 +19,7 @@ struct QuestsView: View {
     )
     
     var body: some View {
-        VStack {
+        VStack ( spacing: 0){
             
             Text("Quests")
                 .font(.largeTitle.bold())
@@ -57,41 +57,86 @@ struct QuestCard: View {
     @Binding var starsCollected: Int
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        HStack(alignment: .center, spacing: 5) {
             
-            HStack {
-                Image(systemName: quest.icon)
-                    .foregroundColor(Color(hex: "#F07B0F"))
-                    .font(.title2)
+            // LEFT SIDE (Icon + Title + Progress)
+            VStack(alignment: .leading, spacing: 5) {
                 
-                Text(quest.title)
-                    .foregroundColor(.white)
-                    .fontWeight(.semibold)
-                
-                Spacer()
-                
-                Text("\(quest.progress)/\(quest.totalRequired)")
-                    .foregroundColor(.white.opacity(0.8))
-                    .font(.caption)
-            }
-            
-            ProgressView(value: Double(quest.progress), total: Double(quest.totalRequired))
-                .tint(Color(hex: "#F07B0F"))
-            
-            if quest.isCompleted {
-                Button("Claim ⭐ \(quest.starReward)") {
-                    starsCollected += quest.starReward
-                    quest.progress = 0 // reset for next day
+                HStack {
+                    Image(systemName: quest.icon)
+                        .foregroundColor(Color(hex: "#F07B0F"))
+                        .font(.title2)
+                    
+                    Text(quest.title)
+                        .foregroundColor(.white)
+                        .fontWeight(.semibold)
                 }
-                .buttonStyle(QuestButtonStyle())
-            } else {
-                Button("Mark Done") {
-                    if quest.progress < quest.totalRequired {
-                        quest.progress += 1
+                
+                ProgressView(value: Double(quest.progress),
+                             total: Double(quest.totalRequired))
+                    .tint(Color(hex: "#F07B0F"))
+                    .frame(maxWidth: .infinity)
+                    .scaleEffect(x: 1, y: 2, anchor: .center)
+            }
+            .frame(maxWidth: .infinity)
+            
+            Spacer()
+            
+            // RIGHT SIDE (Tall Button)
+            VStack(spacing: 8) {
+                
+                // COUNTER TEXT
+                Text("\(quest.progress)/\(quest.totalRequired)")
+                    .font(.caption.bold())
+                    .foregroundColor(Color(hex: "#F07B0F"))
+                
+                HStack(spacing: 16) {
+                    
+                    // MINUS BUTTON
+                    Button {
+                        if quest.progress > 0 {
+                            quest.progress -= 1
+                        }
+                    } label: {
+                        Image(systemName: "minus")
+                            .font(.headline.bold())
+                            .frame(width: 28, height: 28)
+                    }
+                    .disabled(quest.progress == 0)
+                    
+                    if quest.isCompleted {
+                        
+                        // CLAIM BUTTON
+                        Button("Claim ⭐") {
+                            starsCollected += quest.starReward
+                            quest.progress = 0
+                        }
+                        .font(.caption.bold())
+                        
+                    } else {
+                        
+                        // PLUS BUTTON
+                        Button {
+                            if quest.progress < quest.totalRequired {
+                                quest.progress += 1
+                            }
+                        } label: {
+                            Image(systemName: "plus")
+                                .font(.headline.bold())
+                                .frame(width: 28, height: 28)
+                        }
+                        .disabled(quest.progress == quest.totalRequired)
                     }
                 }
-                .buttonStyle(QuestButtonStyle())
+                .padding(.vertical, 6)
+                .padding(.horizontal, 12)
+                .background(Color(hex: "#F07B0F"))
+                .foregroundColor(.white)
+                .cornerRadius(14)
             }
+            .frame(width: 110)
+            .animation(.easeInOut(duration: 0.2), value: quest.progress)
+            .animation(.easeInOut(duration: 0.2), value: quest.progress)
         }
         .padding()
         .background(Color(hex: "#0B2E52").opacity(0.9))
@@ -176,6 +221,18 @@ struct StreakButtonStyle: ButtonStyle {
     }
 }
 
+struct VerticalQuestButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.caption.bold())
+            .multilineTextAlignment(.center)
+            .frame(width: 90, height: 80) // controls button size
+            .background(Color(hex: "#F07B0F"))
+            .foregroundColor(.white)
+            .cornerRadius(14)
+            .opacity(configuration.isPressed ? 0.7 : 1)
+    }
+}
 
 //#Preview {
 //    QuestsView(coinsCollected: .constant(0), starsCollected: .constant(0))
