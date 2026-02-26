@@ -24,7 +24,9 @@ struct ContentView: View {
             }
         }
         .onChange(of: appState.coinsCollected) { newValue in
-            if newValue >= appState.coinGoal && !isCelebrating {
+            if selectedTab == .profile &&
+               newValue == appState.coinGoal &&
+               !isCelebrating {
                 startConfetti()
             }
         }

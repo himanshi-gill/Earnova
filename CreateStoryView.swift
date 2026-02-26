@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct CreateStoryView: View {
     @Binding var coinsCollected: Int
@@ -45,10 +46,10 @@ struct CreateStoryView: View {
                 .cornerRadius(14)
 
                 // Buttons
-                // Buttons
                 if editingTaskIndex != nil {
 
                     Button {
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                         addTask()
                     } label: {
                         Label("Save Changes", systemImage: "checkmark.circle.fill")
@@ -65,6 +66,7 @@ struct CreateStoryView: View {
                     HStack(spacing: 16) {
 
                         Button {
+                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                             selectedTaskType = .reward
                             addTask()
                         } label: {
@@ -78,6 +80,7 @@ struct CreateStoryView: View {
                         }
 
                         Button {
+                            UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
                             selectedTaskType = .penalty
                             addTask()
                         } label: {
@@ -139,6 +142,7 @@ struct CreateStoryView: View {
 
                             // BIGGER EDIT BUTTON
                             Button {
+                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
                                 editTask(at: index)
                             } label: {
                                 Image(systemName: "pencil.circle.fill")
@@ -148,6 +152,7 @@ struct CreateStoryView: View {
 
                             // BIGGER DELETE BUTTON
                             Button {
+                                UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
                                 deleteTask(at: index)
                             } label: {
                                 Image(systemName: "trash.circle.fill")

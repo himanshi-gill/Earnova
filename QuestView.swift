@@ -1,28 +1,29 @@
 import SwiftUI
 
 struct Quest: Identifiable {
-    let id = UUID()
+    let id: String
     let title: String
     let icon: String
     let totalRequired: Int
     let starReward: Int
     
     var progress: Int = 0
+    var lastClaimDate: Date? = nil
+    var wasClaimedToday: Bool = false
+    
     var isCompleted: Bool {
         progress >= totalRequired
     }
-}
-
-//MARK;- streak Model
-struct StreakQuest: Identifiable {
-    let id = UUID()
-    let title: String
-    let daysRequired: Int
-    let coinReward: Int
     
-    var currentDays: Int = 0
+    var isOnCooldown: Bool {
+        guard let lastClaimDate else { return false }
+        return Date() < lastClaimDate.addingTimeInterval(12 * 60 * 60)
+    }
     
-    var isCompleted: Bool {
-        currentDays >= daysRequired
+    var remainingCooldown: TimeInterval {
+        guard let lastClaimDate else { return 0 }
+        let endDate = lastClaimDate.addingTimeInterval(12 * 60 * 60)
+        return max(endDate.timeIntervalSinceNow, 0)
     }
 }
+

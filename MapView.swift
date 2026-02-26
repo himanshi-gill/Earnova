@@ -8,58 +8,89 @@ struct MapView: View {
 
     var avatarImages: [String] = ["animal1", "mascot1"]
 
+    func refreshUniverse() {
+        withAnimation(.easeInOut) {
+            tasks.removeAll()
+        }
+    }
+    
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            ZStack(alignment: .top) {
-                
-// ⭐ Coins & Stars (fixed at top)
-                VStack {
-                    HStack {
-                        Spacer()
-                        VStack(alignment: .trailing, spacing: 6) {
-                            HStack(spacing: 6) {
-                                Image(systemName: "bitcoinsign.circle.fill")
-                                    .foregroundColor(Color(hex: "#F07B0F"))
-                                Text("Coins: \(coinsCollected)")
-                                    .foregroundColor(.white)                                     .bold()
-                            }
-                            HStack(spacing: 6) {
-                                Image(systemName: "star.fill")
-                                    .foregroundColor(Color(hex: "#D1A75C"))
-                                Text("Stars: \(starsCollected)")
-                                    .foregroundColor(.white) 
-                                    .bold()
-                            }
-                        }
-                        .padding(10)
-                        .background(Color.white.opacity(0.1))
-                        .cornerRadius(12)
-                        .padding()
-                    }
-                    Spacer()
-                }
-                ZStack {
-                    ForEach($tasks) { $task in
-                        @State var dragOffset = CGSize.zero // temporary offset for dragging
-                        
-                        TaskBubble(task: task)
-                            .offset(x: task.xOffset + dragOffset.width, y: task.yOffset + dragOffset.height)
-                            .modifier(HoverEffect())
-                            .gesture(
-                                DragGesture()
-                                    .onChanged { value in
-                                        dragOffset = value.translation
-                                    }
-                                    .onEnded { value in
-                                        task.xOffset += value.translation.width
-                                        task.yOffset += value.translation.height
-                                        dragOffset = .zero
-                                    }
-                            )
-                    }
+        ZStack(alignment: .top) {
 
+            // ⭐ Coins & Stars (fixed at top)
+            VStack {
+                HStack {
+                    Spacer()
+                    VStack(alignment: .trailing, spacing: 6) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "bitcoinsign.circle.fill")
+                                .foregroundColor(Color(hex: "#F07B0F"))
+                            Text("Coins: \(coinsCollected)")
+                                .foregroundColor(.white)
+                                .bold()
+                        }
+                        HStack(spacing: 6) {
+                            Image(systemName: "star.fill")
+                                .foregroundColor(Color(hex: "#D1A75C"))
+                            Text("Stars: \(starsCollected)")
+                                .foregroundColor(.white)
+                                .bold()
+                        }
+                    }
+                    .padding(10)
+                    .background(Color.white.opacity(0.1))
+                    .cornerRadius(12)
+                    .padding()
                 }
-                .frame(height: 600)
+                Spacer()
+            }
+
+            // 🫧 Task Bubbles
+            ZStack {
+                ForEach($tasks) { $task in
+                    @State var dragOffset = CGSize.zero
+
+                    TaskBubble(task: task)
+                        .offset(
+                            x: task.xOffset + dragOffset.width,
+                            y: task.yOffset + dragOffset.height
+                        )
+                        .modifier(HoverEffect())
+                        .gesture(
+                            DragGesture()
+                                .onChanged { value in
+                                    dragOffset = value.translation
+                                }
+                                .onEnded { value in
+                                    task.xOffset += value.translation.width
+                                    task.yOffset += value.translation.height
+                                    dragOffset = .zero
+                                }
+                        )
+                }
+            }
+
+            // 🔄 Refresh Button
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+
+                    Button {
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                        refreshUniverse()
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.title2.bold())
+                            .foregroundColor(.white)
+                            .frame(width: 55, height: 55)
+                            .background(Color(hex: "#F07B0F"))
+                            .clipShape(Circle())
+                            .shadow(radius: 5)
+                    }
+                    .padding(.trailing, 20)
+                    .padding(.bottom, 40)
+                }
             }
         }
     }

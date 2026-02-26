@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct ProfileView: View {
     
@@ -68,6 +69,7 @@ struct ProfileView: View {
                                             .multilineTextAlignment(.center)
                                             .submitLabel(.done)
                                             .onSubmit {
+                                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                                 isEditingName = false
                                             }
                                     } else {
@@ -75,6 +77,7 @@ struct ProfileView: View {
                                             .font(.title2.bold())
                                             .foregroundColor(.white)
                                             .onTapGesture {
+                                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
                                                 isEditingName = true
                                             }
                                     }
@@ -122,6 +125,7 @@ struct ProfileView: View {
                                     HStack(spacing: 24) {
 
                                         Button {
+                                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
                                             coinGoal = max(50, coinGoal - 500)
                                         } label: {
                                             Image(systemName: "minus.circle.fill")
@@ -134,6 +138,7 @@ struct ProfileView: View {
                                             .foregroundColor(.white)
 
                                         Button {
+                                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
                                             coinGoal = min(10000, coinGoal + 500)
                                         } label: {
                                             Image(systemName: "plus.circle.fill")
