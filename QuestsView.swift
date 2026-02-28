@@ -45,12 +45,12 @@ struct QuestsView: View {
                         )
                     }
                     
-                    Spacer(minLength: 120) // space for streak section
+                    Spacer(minLength: 120)
                 }
                 .padding()
             }
             
-            // 🌟 STREAK SECTION (Fixed Bottom)
+            // STREAK SECTION
             VStack(spacing: 10) {
 
                 Text("Daily Completion Reward")
@@ -59,7 +59,7 @@ struct QuestsView: View {
 
                 if allQuestsClaimed && !hasClaimedToday {
 
-                    Button("Claim 10 Coins 🪙") {
+                    Button("Claim 10 Coins") {
                         UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
 
                         coinsCollected += 10
@@ -117,7 +117,6 @@ struct QuestCard: View {
     var body: some View {
         HStack(alignment: .center, spacing: 5) {
             
-            // LEFT SIDE (Icon + Title + Progress)
             VStack(alignment: .leading, spacing: 5) {
                 
                 HStack {
@@ -140,10 +139,8 @@ struct QuestCard: View {
             
             Spacer()
             
-            // RIGHT SIDE (Tall Button)
             VStack(spacing: 8) {
                 
-                // COUNTER TEXT
                 Text("\(quest.progress)/\(quest.totalRequired)")
                     .font(.caption.bold())
                     .foregroundColor(Color(hex: "#F07B0F"))
@@ -228,18 +225,16 @@ struct CooldownRingView: View {
     var body: some View {
         ZStack {
             
-            // Background Circle
             Circle()
                 .stroke(Color.white.opacity(0.2), lineWidth: 5)
             
-            // Progress Ring
             Circle()
                 .trim(from: 0, to: progress)
                 .stroke(Color.white, style: StrokeStyle(lineWidth: 5, lineCap: .round))
                 .rotationEffect(.degrees(-90))
                 .animation(.linear, value: progress)
             
-            // Clock icon in center
+            // Clock icon
             Image(systemName: "clock.fill")
                 .font(.system(size: 20, weight: .bold))
         }
@@ -286,6 +281,3 @@ struct VerticalQuestButtonStyle: ButtonStyle {
     }
 }
 
-//#Preview {
-//    QuestsView(coinsCollected: .constant(0), starsCollected: .constant(0))
-//}

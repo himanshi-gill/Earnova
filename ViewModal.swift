@@ -45,14 +45,8 @@ final class AppState: ObservableObject {
     }
     
     func completeGoalAndReset() {
-
-        // Carry forward remaining coins
         coinsCollected -= coinGoal
         
-        // Optional: increase next goal
-        // coinGoal += 1000
-        
-        // Clear tasks
         tasks.removeAll()
     }
 

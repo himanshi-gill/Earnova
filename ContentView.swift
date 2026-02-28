@@ -47,7 +47,7 @@ struct ContentView: View {
             Image("it")
                 .resizable()
                 .scaledToFill()
-                .ignoresSafeArea() // ONLY the background ignores safe area
+                .ignoresSafeArea()
 
         default:
             LinearGradient(
@@ -82,9 +82,6 @@ struct ContentView: View {
     }
 
     
-
-
-    // ✅ FUNCTION GOES HERE (outside body)
     @ViewBuilder
     private func currentTabView() -> some View {
         switch selectedTab {

@@ -17,7 +17,6 @@ struct MapView: View {
     var body: some View {
         ZStack(alignment: .top) {
 
-            // ⭐ Coins & Stars (fixed at top)
             VStack {
                 HStack {
                     Spacer()
@@ -45,7 +44,6 @@ struct MapView: View {
                 Spacer()
             }
 
-            // 🫧 Task Bubbles
             ZStack {
                 ForEach($tasks) { $task in
                     @State var dragOffset = CGSize.zero
@@ -70,7 +68,7 @@ struct MapView: View {
                 }
             }
 
-            // 🔄 Refresh Button
+            // Refresh Button
             VStack {
                 Spacer()
                 HStack {
@@ -108,7 +106,6 @@ struct MapView: View {
 }
 
 
-// Task Bubble View (UPDATED)
 struct TaskBubble: View {
     var task: Task
 
@@ -145,12 +142,12 @@ struct HoverEffect: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .offset(y: hover) // hover animation added on top of manual Y offset
+            .offset(y: hover)
             .onAppear {
                 let baseAnimation = Animation.easeInOut(duration: 1.5)
                     .repeatForever(autoreverses: true)
                 withAnimation(baseAnimation) {
-                    hover = 10 // floating distance
+                    hover = 10
                 }
             }
     }

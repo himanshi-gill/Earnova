@@ -104,7 +104,7 @@ struct ShopView: View {
         generator.prepare()
         generator.impactOccurred()
     }
-    //    @State private var selectedAnimal: Animal? = nil
+
     var body: some View {
         ZStack {
 
@@ -116,7 +116,6 @@ struct ShopView: View {
                         .foregroundColor(.white)
                         .padding(.top, 10)
                     
-                    // Selected Avatar
                     VStack(spacing: 10) {
                         Image(selectedAvatarImage)
                             .resizable()
@@ -135,7 +134,6 @@ struct ShopView: View {
                     .cornerRadius(20)
                     .padding(.horizontal)
                     
-                    // Stars Balance
                     HStack {
                         Image(systemName: "star.fill")
                             .foregroundColor(Color(hex: "#D1A75C"))

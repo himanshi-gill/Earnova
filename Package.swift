@@ -8,18 +8,18 @@ import PackageDescription
 import AppleProductTypes
 
 let package = Package(
-    name: "Paysa",
+    name: "Earnova",
     platforms: [
         .iOS("16.0")
     ],
     products: [
         .iOSApplication(
-            name: "Paysa",
+            name: "Earnova",
             targets: ["AppModule"],
             bundleIdentifier: "com.HG.Paysa",
             displayVersion: "1.0",
             bundleVersion: "1",
-            appIcon: .placeholder(icon: .mic),
+            appIcon: .placeholder(icon: .lightningBolt),
             accentColor: .presetColor(.red),
             supportedDeviceFamilies: [
                 .pad,

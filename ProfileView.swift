@@ -19,7 +19,7 @@ struct ProfileView: View {
         ScrollView {
             VStack(spacing: 20) {
                            
-                           // 🔹 PROFILE TITLE
+                           // PROFILE TITLE
                            Text("Profile")
                                .font(.largeTitle.bold())
                                .foregroundColor(.white)
@@ -49,7 +49,6 @@ struct ProfileView: View {
                            .cornerRadius(20)
                            .padding(.horizontal)
                 
-                // AVATAR + NAME
                                 VStack(spacing: 12) {
                                     
                                     Image(selectedAvatarImage)
@@ -84,7 +83,6 @@ struct ProfileView: View {
                                 }
                                 .padding(.top)
                 
-                // STATS
                 HStack(spacing: 40) {
                     VStack {
                         Image(systemName: "star.fill")

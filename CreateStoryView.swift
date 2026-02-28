@@ -26,11 +26,8 @@ struct CreateStoryView: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
-//                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top, 10)
-            // TOP SECTION
             VStack(spacing: 18) {
-                // Text Field
                 HStack(spacing: 8) {
 
                     TextField("Enter task name", text: $newTaskTitle)
@@ -45,7 +42,6 @@ struct CreateStoryView: View {
                 .background(Color.white.opacity(0.15))
                 .cornerRadius(14)
 
-                // Buttons
                 if editingTaskIndex != nil {
 
                     Button {
@@ -106,7 +102,6 @@ struct CreateStoryView: View {
             .cornerRadius(20)
             .padding()
 
-            // BOTTOM SCROLLABLE LOG AREA
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     ForEach(tasks.indices, id: \.self) { index in
@@ -140,7 +135,7 @@ struct CreateStoryView: View {
 
                             Spacer()
 
-                            // BIGGER EDIT BUTTON
+                            // EDIT BUTTON
                             Button {
                                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
                                 editTask(at: index)
@@ -150,7 +145,7 @@ struct CreateStoryView: View {
                                     .foregroundColor(.blue)
                             }
 
-                            // BIGGER DELETE BUTTON
+                            // DELETE BUTTON
                             Button {
                                 UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
                                 deleteTask(at: index)
@@ -178,7 +173,6 @@ struct CreateStoryView: View {
             let oldType = tasks[index].type
             let newType = selectedTaskType
 
-            // If type changed, adjust coins correctly
             if oldType != newType {
                 if oldType == .reward {
                     coinsCollected -= 10
@@ -200,7 +194,6 @@ struct CreateStoryView: View {
             editingTaskIndex = nil
 
         } else {
-            // NEW TASK MODE
             let coinChange = selectedTaskType == .reward ? 10 : -15
             coinsCollected += coinChange
 
@@ -231,7 +224,6 @@ struct CreateStoryView: View {
 
         tasks.remove(at: index)
 
-        // If we were editing this task, reset editing state
         if editingTaskIndex == index {
             editingTaskIndex = nil
             newTaskTitle = ""

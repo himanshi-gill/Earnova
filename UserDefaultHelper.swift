@@ -10,14 +10,14 @@ struct UserDefaultsManager {
     static let unlockedAvatarsKey = "unlockedAvatars"
     static let userNameKey = "userName"
     
-    // MARK: - Save
+    //Save
     static func saveTasks(_ tasks: [Task]) {
         if let data = try? JSONEncoder().encode(tasks) {
             UserDefaults.standard.set(data, forKey: tasksKey)
         }
     }
     
-    // MARK: - Load
+    //Load
     static func loadTasks() -> [Task] {
         guard let data = UserDefaults.standard.data(forKey: tasksKey),
               let tasks = try? JSONDecoder().decode([Task].self, from: data)
@@ -27,13 +27,13 @@ struct UserDefaultsManager {
         return tasks
     }
     
-    // MARK: - Save Unlocked Avatars
+    //Save Unlocked Avatars
     static func saveUnlockedAvatars(_ avatars: Set<String>) {
         let array = Array(avatars)
         UserDefaults.standard.set(array, forKey: unlockedAvatarsKey)
     }
 
-    // MARK: - Load Unlocked Avatars
+    //Load Unlocked Avatars
     static func loadUnlockedAvatars() -> Set<String> {
         let array = UserDefaults.standard.stringArray(forKey: unlockedAvatarsKey) ?? []
         return Set(array)
